@@ -9,31 +9,14 @@ def get_input():
         return [int(x) for line in f.readlines() for x in line.split(",")]
 
 
-def pt_one():
-    f1 = get_input()
-
-    for day in range(1, 81):
-        for i in range(len(f1)):
-            fish = f1[i]
-            if fish == 0:
-                f1.append(8)
-                f1[i] = 6
-            else:
-                f1[i] = f1[i] - 1
-
-    return len(f1)
-
-
-def pt_two():
+def get_counts(days):
     f1 = get_input()
 
     counts = DefaultDict(int)
     for num in f1:
         counts[num] += 1
 
-    print(counts)
-
-    for day in range(1, 257):
+    for day in range(1, days + 1):
         respawning = counts[0]
         for i in range(1, 9):
             counts[i - 1] = counts[i]
@@ -44,5 +27,5 @@ def pt_two():
     return sum([counts[x] for x in counts])
 
 
-print(pt_one())
-print(pt_two())
+print("Part #1: ", get_counts(80))
+print("Part #2: ", get_counts(256))

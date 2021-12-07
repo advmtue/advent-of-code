@@ -1,6 +1,3 @@
-from typing import DefaultDict
-
-
 INPUT_FILE = "input"
 
 
@@ -9,25 +6,16 @@ def get_input():
         return [int(x) for line in f.readlines() for x in line.split(",")]
 
 
-f1 = get_input()
+def pt_two_consumption_calc(start, stop):
+    delta = abs(start - stop)
+    return int(delta * ((delta + 1) / 2))
 
 
-def fuel_cost(start, stop):
-    difference = abs(start - stop)
-    return int(difference * ((difference + 1) / 2))
+def determine_fuel_cost(starts, cost_calculator):
+    return min(
+        sum(cost_calculator(num, i) for num in starts) for i in range(max(starts))
+    )
 
 
-totals = DefaultDict(int)
-for i in range(max(f1)):
-    for num in f1:
-        totals[i] += fuel_cost(num, i)
-
-
-tmin = None
-imin = -1
-for i in totals:
-    if tmin == None or totals[i] <= tmin:
-        tmin = totals[i]
-        imin = i
-
-print(imin, totals[imin])
+print("Part #1:", determine_fuel_cost(get_input(), lambda x, y: abs(x - y)))
+print("Part #2:", determine_fuel_cost(get_input(), pt_two_consumption_calc))

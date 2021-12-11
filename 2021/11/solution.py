@@ -1,22 +1,6 @@
 INFILE = "input"
 
-
-def get_input():
-    with open(INFILE) as f:
-        return [x.strip() for x in f.readlines()]
-
-
-def in_graph(I, x, y):
-    if x < 0 or y < 0:
-        return False
-
-    if x >= len(I) or y >= len(I):
-        return False
-
-    return True
-
-
-I = [[[int(x), False] for x in l] for l in get_input()]
+I = [[int(x) for x in l.strip()] for l in open(INFILE).readlines()]
 
 flash_count = 0
 first_all_flash = None
@@ -25,7 +9,7 @@ while i < 100 or not first_all_flash:
     # Increase energy levels
     for yi, y in enumerate(I):
         for xi, x in enumerate(y):
-            I[yi][xi][0] += 1
+            I[yi][xi] += 1
 
     # Look for flashes
     flash_occurred = True
@@ -33,44 +17,28 @@ while i < 100 or not first_all_flash:
         flash_occurred = False
         for yi, y in enumerate(I):
             for xi, x in enumerate(y):
-                if x[0] > 9 and not x[1]:
-                    # Flash!
+                if x == 10:
+                    I[yi][xi] += 1
                     flash_occurred = True
+
                     if i < 100:
                         flash_count += 1
 
-                    I[yi][xi][1] = True
+                    # Neighbors
+                    for dy in range(yi - 1, yi + 2):
+                        for dx in range(xi - 1, xi + 2):
+                            if 0 <= dy < len(I) and 0 <= dx < len(y) and I[dy][dx] < 10:
+                                I[dy][dx] += 1
 
-                    if in_graph(I, xi - 1, yi - 1):
-                        I[yi - 1][xi - 1][0] += 1
-                    if in_graph(I, xi, yi - 1):
-                        I[yi - 1][xi][0] += 1
-                    if in_graph(I, xi + 1, yi - 1):
-                        I[yi - 1][xi + 1][0] += 1
-
-                    if in_graph(I, xi - 1, yi):
-                        I[yi][xi - 1][0] += 1
-                    if in_graph(I, xi + 1, yi):
-                        I[yi][xi + 1][0] += 1
-
-                    if in_graph(I, xi - 1, yi + 1):
-                        I[yi + 1][xi - 1][0] += 1
-                    if in_graph(I, xi, yi + 1):
-                        I[yi + 1][xi][0] += 1
-                    if in_graph(I, xi + 1, yi + 1):
-                        I[yi + 1][xi + 1][0] += 1
-
-    # If we haven't encountered the all-flash moment, calculate if it is now
     if not first_all_flash:
-        tfc = len([x for y in I for x in y if x[1]])
+        tfc = len([x for y in I for x in y if x > 9])
         if tfc == 100:
             first_all_flash = i + 1
 
-    # Reset flashed fish to 0
     for yi, y in enumerate(I):
         for xi, x in enumerate(y):
-            if x[1]:
-                I[yi][xi] = [0, False]
+            if x > 9:
+                I[yi][xi] = 0
 
     i += 1
 
